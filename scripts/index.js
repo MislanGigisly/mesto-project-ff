@@ -4,14 +4,18 @@ const cardTemplate = document.querySelector('#card-template').content;
 
 // @todo: DOM узлы
 
+// создаём узел места расположения карточек
 const place = document.querySelector('.places__list');
-const deleteButton = document.querySelector('.card__delete-button');
+// создаём узел с кнопкой удадения
+
 
 // @todo: Функция создания карточки
 
 function addCards (card , removeCard) {
     // клонируем содержимое тега template
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
+    // создаём узел кнопки удадения
+    const deleteButton = cardElement.querySelector('.card__delete-button');
     // наполняем содержимым
     cardElement.querySelector('.card__image').src = card.link;
     cardElement.querySelector('.card__image').alt = card.link;
@@ -29,7 +33,7 @@ function removeCard(evt) {
 // @todo: Вывести карточки на страницу
 
 initialCards.forEach(function(card){
-    const item = addCards (card , removeCard);
+    const item = addCards (card, removeCard);
     place.append(item); 
 });
 
