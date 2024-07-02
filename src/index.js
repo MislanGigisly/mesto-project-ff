@@ -1,5 +1,5 @@
-import './pages/index.css'; // добавьте импорт главного файла стилей 
-import './scripts/cards.js' //добавляем файл с карточками, так как этот файл - точка входа
+import  './pages/index.css'; // добавьте импорт главного файла стилей 
+import {initialCards} from './scripts/cards.js' //добавляем файл с карточками, так как этот файл - точка входа
 // @todo: Темплейт карточки
 
 const cardTemplate = document.querySelector('#card-template').content;
