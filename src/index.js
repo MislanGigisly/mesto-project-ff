@@ -1,20 +1,16 @@
 import  './pages/index.css'; // добавьте импорт главного файла стилей 
 import {initialCards} from './scripts/cards.js'//добавляем файл с карточками, так как этот файл - точка входа
-import {openWindow} from './scripts/modal.js'//функции открытия окон
+import {openWindow, closePopup} from './scripts/modal.js'//функции открытия окон
 //Элементы со страницы
 
-
+//попапы
 const editButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
-
 const addButton = document.querySelector('.profile__add-button');
 const addPopup = document.querySelector('.popup_type_new-card');
-const addCloseButton = addPopup.querySelector('.popup__close');
 const imagePopup = document.querySelector('.popup_type_image');
-const imageCloseButton = imagePopup.querySelector('.popup__close');
 
 
-export {}
 
 
 // @todo: Темплейт карточки
@@ -66,3 +62,34 @@ editButton.addEventListener('click', () =>{
 addButton.addEventListener('click', () =>{
     openWindow(addPopup);
 });
+
+
+
+
+//профиль
+const username = document.querySelector('.profile__title');
+const profession = document.querySelector('.profile__description');
+// Находим форму в DOM
+const formElement = document.forms[0]
+// Находим поля формы в DOM
+const nameInput = formElement.elements.name
+const jobInput = formElement.elements.description
+//Подставляем имя и профессию со страницы в popup
+nameInput.setAttribute('value', username.textContent)
+jobInput.setAttribute('value', profession.textContent)
+// Обработчик «отправки» формы
+function handleFormSubmit(evt) {
+    evt.preventDefault();
+    // Получите значение полей jobInput и nameInput из свойства value
+    const valueName = nameInput.value;
+    const valueJob = jobInput.value;
+    // Выберите элементы, куда должны быть вставлены значения полей
+
+    // Вставьте новые значения с помощью textContent
+    username.textContent = valueName;
+    profession.textContent = valueJob;
+    closePopup(editPopup)
+}
+// Прикрепляем обработчик к форме:
+// он будет следить за событием “submit” - «отправка»
+formElement.addEventListener('submit', handleFormSubmit); 
