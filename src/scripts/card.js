@@ -17,7 +17,7 @@ function addCards (card, removeCard, giveLike, showCard) {
     deleteButton.addEventListener('click', removeCard);
     //добавляем обрабочик кнопки like
     likeButton.addEventListener('click', giveLike);
-
+    //находим карточку по картинке
     const cardButton = cardElement.querySelector('.card__image');
     //обработчик открытия попапа карточки
     cardButton.addEventListener('click', () =>showCard(card));

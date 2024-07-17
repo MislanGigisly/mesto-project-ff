@@ -1,8 +1,7 @@
 import  './pages/index.css'; // добавьте импорт главного файла стилей 
 import {initialCards} from './scripts/cards.js'//добавляем файл с карточками, так как этот файл - точка входа
 import {openWindow, closePopup} from './scripts/modal.js'//функции открытия окон
-import {addCards} from './scripts/card.js'
-
+import {addCards} from './scripts/card.js'//функции карточек
 
 //попапы
 const editButton = document.querySelector('.profile__edit-button');
@@ -10,9 +9,6 @@ const editPopup = document.querySelector('.popup_type_edit');
 const addButton = document.querySelector('.profile__add-button');
 const addPopup = document.querySelector('.popup_type_new-card');
 const imagePopup = document.querySelector('.popup_type_image');
-
-
-
 
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
@@ -49,7 +45,7 @@ formAddCards.addEventListener('submit', (evt) => {
     const titleOfCard = document.querySelector('.popup__input_type_card-name');
     const ancorOfCard = document.querySelector('.popup__input_type_url');
     const newCard = {name: titleOfCard.value, link: ancorOfCard.value}
-    const item = addCards (newCard, removeCard, giveLike);
+    const item = addCards (newCard, removeCard, giveLike, showCard);
     place.prepend(item);
     closePopup(addPopup);
     titleOfCard.value = "";
@@ -61,11 +57,13 @@ formAddCards.addEventListener('submit', (evt) => {
 editButton.addEventListener('click', () =>{
     openWindow(editPopup);
 });
+
 //добавление карточки
 addButton.addEventListener('click', () =>{
     openWindow(addPopup);
 });
 
+//просмотр карточки
 function showCard (card){
     const imageInCard = document.querySelector('.popup__image');
     const titleInCard = document.querySelector('.popup__caption');
@@ -103,9 +101,5 @@ function handleFormSubmit(evt) {
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
 formElement.addEventListener('submit', handleFormSubmit); 
-
-
-
-
 
 export {cardTemplate, openWindow, imagePopup,}

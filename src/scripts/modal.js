@@ -6,6 +6,7 @@ function openWindow (popup) {
     addEventListener('keydown', closeEscape);
     
 };
+
 //закрытие модальных окон
 function closePopup (popup){
     popup.classList.remove('popup_is-opened');
@@ -27,7 +28,6 @@ function closeEscape (evt) {
     removeEventListener('keydown', closeEscape);
     }
 }
-
 
 export{openWindow, closePopup};
 
