@@ -10,6 +10,24 @@ const addButton = document.querySelector('.profile__add-button');
 const addPopup = document.querySelector('.popup_type_new-card');
 const imagePopup = document.querySelector('.popup_type_image');
 
+//Элементы форм
+const titleOfCard = document.querySelector('.popup__input_type_card-name');
+const ancorOfCard = document.querySelector('.popup__input_type_url');
+
+//Элементы карточки
+const imageInCard = document.querySelector('.popup__image');
+const titleInCard = document.querySelector('.popup__caption');
+
+// Выберите элементы, куда должны быть вставлены значения полей
+const username = document.querySelector('.profile__title');
+const profession = document.querySelector('.profile__description');
+// Находим форму профиля в DOM
+const formEditElement = document.forms['edit-profile']
+// Находим поля формы в DOM
+const nameInput = formEditElement.elements.name
+const jobInput = formEditElement.elements.description
+//Подставляем имя и профессию со страницы в popup
+
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
 
@@ -19,10 +37,7 @@ const formAddCards = document.forms[1];
 // создаём узел места расположения карточек
 const place = document.querySelector('.places__list');
 
-//Функция удаления карточки
-function removeCard(evt) {
-    evt.target.closest('.places__item').remove();
-};
+
 
 //функция лайка карточки и разлайка
 function giveLike(evt) {
@@ -35,17 +50,15 @@ function giveLike(evt) {
 
 //Вывести карточки на страницу
 initialCards.forEach(function(card){
-    const item = addCards (card, removeCard, giveLike, showCard);
+    const item = addCards (card, giveLike, showCard);
     place.append(item); 
 });
 
 //Слушатель для добавления новой карточки
 formAddCards.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    const titleOfCard = document.querySelector('.popup__input_type_card-name');
-    const ancorOfCard = document.querySelector('.popup__input_type_url');
     const newCard = {name: titleOfCard.value, link: ancorOfCard.value}
-    const item = addCards (newCard, removeCard, giveLike, showCard);
+    const item = addCards (newCard, giveLike, showCard);
     place.prepend(item);
     closePopup(addPopup);
     titleOfCard.value = "";
@@ -65,34 +78,21 @@ addButton.addEventListener('click', () =>{
 
 //просмотр карточки
 function showCard (card){
-    const imageInCard = document.querySelector('.popup__image');
-    const titleInCard = document.querySelector('.popup__caption');
     imageInCard.src = card.link
+    imageInCard.alt = card.link
     titleInCard.textContent = card.name
     openWindow(imagePopup);
 }
 
-
 //профиль
-const username = document.querySelector('.profile__title');
-const profession = document.querySelector('.profile__description');
-// Находим форму в DOM
-const formElement = document.forms[0]
-// Находим поля формы в DOM
-const nameInput = formElement.elements.name
-const jobInput = formElement.elements.description
-//Подставляем имя и профессию со страницы в popup
 nameInput.setAttribute('value', username.textContent)
 jobInput.setAttribute('value', profession.textContent)
 // Обработчик «отправки» формы для профиля
-function handleFormSubmit(evt) {
+function handleEditFormSubmit(evt) {
     evt.preventDefault();
     // Получите значение полей jobInput и nameInput из свойства value
     const valueName = nameInput.value;
     const valueJob = jobInput.value;
-    // Выберите элементы, куда должны быть вставлены значения полей
-    const username = document.querySelector('.profile__title');
-    const profession = document.querySelector('.profile__description');
     // Вставьте новые значения с помощью textContent
     username.textContent = valueName;
     profession.textContent = valueJob;
@@ -100,6 +100,6 @@ function handleFormSubmit(evt) {
 }
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
-formElement.addEventListener('submit', handleFormSubmit); 
+formEditElement.addEventListener('submit', handleEditFormSubmit); 
 
-export {cardTemplate, openWindow, imagePopup,}
+export {cardTemplate}

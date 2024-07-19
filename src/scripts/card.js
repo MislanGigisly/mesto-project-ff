@@ -1,28 +1,36 @@
 
-import {cardTemplate, openWindow, imagePopup} from "../index.js";
+import {cardTemplate} from "../index.js";
+
+//Функция удаления карточки
+function removeCard(evt) {
+    evt.target.closest('.places__item').remove();
+};
 
 // @todo: Функция создания карточки
-function addCards (card, removeCard, giveLike, showCard) {
+function addCards (card, giveLike, showCard) {
     // клонируем содержимое тега template
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
     // создаём узел кнопки удадения
     const deleteButton = cardElement.querySelector('.card__delete-button');
     //создаём узел кнопки like
     const likeButton = cardElement.querySelector('.card__like-button')
+    //находим элементы карточки
+    const cardButtonImg = cardElement.querySelector('.card__image');
+    const cardButtonTitle = cardElement.querySelector('.card__title');
     // наполняем содержимым
-    cardElement.querySelector('.card__image').src = card.link;
-    cardElement.querySelector('.card__image').alt = card.link;
-    cardElement.querySelector('.card__title').textContent = card.name;
+    cardButtonImg.src = card.link;
+    cardButtonImg.alt = card.link;
+    cardButtonTitle.textContent = card.name;
     //добавляем обрабочик кнопки удаления
     deleteButton.addEventListener('click', removeCard);
     //добавляем обрабочик кнопки like
     likeButton.addEventListener('click', giveLike);
-    //находим карточку по картинке
-    const cardButton = cardElement.querySelector('.card__image');
     //обработчик открытия попапа карточки
-    cardButton.addEventListener('click', () =>showCard(card));
+    cardButtonImg.addEventListener('click', () =>showCard(card));
     return cardElement;  
 };
+
+
 
 export {addCards}
 
