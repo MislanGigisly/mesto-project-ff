@@ -3,14 +3,14 @@
 function openWindow (popup) {
     popup.classList.add('popup_is-opened');
     popup.addEventListener('click', closeOverlay);
-    addEventListener('keydown',closeEscape);
+    document.addEventListener('keydown',closeEscape);
 }
     
 
 //закрытие модальных окон
 function closePopup (popup){
     popup.classList.remove('popup_is-opened');
-    removeEventListener('keydown', closeEscape);
+    document.removeEventListener('keydown', closeEscape);
 }
 
 // функция закрытия попапа по клику на Overlay или кнопке X 
@@ -25,7 +25,7 @@ function closeEscape (evt) {
   if (evt.key === 'Escape') {
     const OpenedPopup = document.querySelector('.popup_is-opened')
     closePopup(OpenedPopup)
-    removeEventListener('keydown', closeEscape);
+    document.removeEventListener('keydown', closeEscape);
     }
 }
 

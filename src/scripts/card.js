@@ -7,7 +7,7 @@ function removeCard(evt) {
 };
 
 // @todo: Функция создания карточки
-function addCards (card, giveLike, showCard) {
+function addCards (card, showCard) {
     // клонируем содержимое тега template
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
     // создаём узел кнопки удадения
@@ -30,6 +30,14 @@ function addCards (card, giveLike, showCard) {
     return cardElement;  
 };
 
+//функция лайка карточки и разлайка
+function giveLike(evt) {
+    if (evt.target.classList.contains('card__like-button_is-active')){
+     evt.target.classList.remove('card__like-button_is-active')
+    }else {
+     evt.target.classList.add('card__like-button_is-active')
+    }
+ }
 
 
 export {addCards}

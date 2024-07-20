@@ -32,25 +32,14 @@ const jobInput = formEditElement.elements.description
 const cardTemplate = document.querySelector('#card-template').content;
 
 //создаём узлы формы и инпутов
-const formAddCards = document.forms[1];
+const formAddCards = document.forms['new-place'];
 
 // создаём узел места расположения карточек
 const place = document.querySelector('.places__list');
 
-
-
-//функция лайка карточки и разлайка
-function giveLike(evt) {
-   if (evt.target.classList.contains('card__like-button_is-active')){
-    evt.target.classList.remove('card__like-button_is-active')
-   }else {
-    evt.target.classList.add('card__like-button_is-active')
-   }
-}
-
 //Вывести карточки на страницу
 initialCards.forEach(function(card){
-    const item = addCards (card, giveLike, showCard);
+    const item = addCards (card, showCard);
     place.append(item); 
 });
 
@@ -58,7 +47,7 @@ initialCards.forEach(function(card){
 formAddCards.addEventListener('submit', (evt) => {
     evt.preventDefault();
     const newCard = {name: titleOfCard.value, link: ancorOfCard.value}
-    const item = addCards (newCard, giveLike, showCard);
+    const item = addCards (newCard, showCard);
     place.prepend(item);
     closePopup(addPopup);
     titleOfCard.value = "";
