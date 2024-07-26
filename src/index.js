@@ -2,6 +2,7 @@ import  './pages/index.css'; // добавьте импорт главного �
 import {initialCards} from './scripts/cards.js'//добавляем файл с карточками, так как этот файл - точка входа
 import {openWindow, closePopup} from './scripts/modal.js'//функции открытия окон
 import {addCards} from './scripts/card.js'//функции карточек
+import {setEventListeners} from './scripts/validation.js'//валидация
 
 //попапы
 const editButton = document.querySelector('.profile__edit-button');
@@ -58,6 +59,7 @@ formAddCards.addEventListener('submit', (evt) => {
 //профиль
 editButton.addEventListener('click', () =>{
     openWindow(editPopup);
+    setEventListeners(formEditElement)
 });
 
 //добавление карточки
@@ -90,5 +92,7 @@ function handleEditFormSubmit(evt) {
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
 formEditElement.addEventListener('submit', handleEditFormSubmit); 
+
+//enableValidation()
 
 export {cardTemplate}
