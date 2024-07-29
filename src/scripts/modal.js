@@ -5,7 +5,6 @@ function openWindow (popup) {
     popup.addEventListener('click', closeOverlay);
     document.addEventListener('keydown',closeEscape);
 }
-    
 
 //закрытие модальных окон
 function closePopup (popup){
