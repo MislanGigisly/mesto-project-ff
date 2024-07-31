@@ -1,15 +1,15 @@
 
-import {cardTemplate,} from "../index.js";
-import {deleteCard, addLike, deleteLike,userId} from "./api.js";
+import {deleteCard, addLike, deleteLike} from "./api.js";
 
 //Функция удаления карточки
 function removeCard(evt) {
     evt.target.closest('.places__item').remove();
 };
+    // ищем template   
+    const cardTemplate = document.querySelector('#card-template').content;
 
-// @todo: Функция создания карточки
-function addCards (card, showCard) {
-
+    // @todo: Функция создания карточки
+function addCards (card, showCard, id) {
     // клонируем содержимое тега template
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
 
@@ -29,7 +29,7 @@ function addCards (card, showCard) {
     cardButtonTitle.textContent = card.name;
 
     //добавляем обрабочик кнопки удаления
-    if (card.owner._id !== userId) {
+    if (card.owner._id !== id) {
         deleteButton.remove();
     }
 
@@ -59,11 +59,23 @@ function addCards (card, showCard) {
 //функция лайка карточки и разлайка
 function giveLike(evt, card, likeCounter) {
     if (evt.target.classList.contains('card__like-button_is-active')){
-     evt.target.classList.remove('card__like-button_is-active')
-     deleteLike(card._id).then(result => likeCounter.textContent =result.likes.length)
+        deleteLike(card._id)
+        .then((result) => {
+            evt.target.classList.remove('card__like-button_is-active')
+            likeCounter.textContent =result.likes.length
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }else {
-     evt.target.classList.add('card__like-button_is-active');
-     addLike(card._id).then(result => likeCounter.textContent = result.likes.length)
+        addLike(card._id)
+        .then((result) => {
+            likeCounter.textContent = result.likes.length
+            evt.target.classList.add('card__like-button_is-active');
+        })
+        .catch((err) => {
+            console.log(err);
+        })
 
     }
 }

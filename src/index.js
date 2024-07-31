@@ -2,8 +2,8 @@ import  './pages/index.css'; // добавьте импорт главного �
 import {initialCards} from './scripts/cards.js'//добавляем файл с карточками, так как этот файл - точка входа
 import {openWindow, closePopup} from './scripts/modal.js'//функции открытия окон
 import {addCards} from './scripts/card.js'//функции карточек
-import {setEventListeners} from './scripts/validation.js'//валидация
-import {editUserData, addNewCard, editAvatar} from './scripts/api.js'//api
+import {setEventListeners, checkInputValidity} from './scripts/validation.js'//валидация
+import {editUserData, addNewCard, editAvatar, getCardsAndMyId} from './scripts/api.js'//api
 
 //попапы
 const editButton = document.querySelector('.profile__edit-button');
@@ -17,6 +17,7 @@ const profilePhoto = document.querySelector('.profile__image');
 //Элементы форм
 const titleOfCard = document.querySelector('.popup__input_type_card-name');
 const ancorOfCard = document.querySelector('.popup__input_type_url');
+
 const formProfilePhoto = document.forms['new-photo'];
 const ancorOfPhoto = formProfilePhoto.querySelector('.popup__input_type_photo');
 
@@ -37,13 +38,49 @@ const jobInput = formEditElement.elements.description
 
 //Подставляем имя и профессию со страницы в popup
 // @todo: Темплейт карточки
-const cardTemplate = document.querySelector('#card-template').content;
+
 
 //создаём узлы формы и инпутов
 const formAddCards = document.forms['new-place'];
 
 // создаём узел места расположения карточек
 const place = document.querySelector('.places__list');
+
+//переменная для вывода моего Id
+let userId = null;
+let userNameFromServer = null;
+let userAbout = null;
+
+//получаем карточки и id вместе
+getCardsAndMyId
+.then(([getUserData,getAllCards])=>{
+
+   userId = getUserData._id;
+   userNameFromServer = getUserData.name;
+   userAbout = getUserData.about;
+
+   getAllCards.forEach(function(card){
+       const item = addCards (card, showCard, getUserData._id);
+       place.append(item); 
+   })
+
+
+   //вставляем данные с сервера при открытии попапа профиля
+
+
+   //Размещаем фото профиля
+
+   profilePhoto.setAttribute('style',`background-image: url(${getUserData.avatar}}`);
+
+   //вставляем данные профиля с сервера при загрузке страницы
+
+       username.textContent = getUserData.name;
+       profession.textContent = getUserData.about;
+       nameInput.value = getUserData.name;
+       jobInput.value = getUserData.about;
+})
+.catch((err) => console.log(err));
+
 
 //Слушатель для добавления новой карточки
 formAddCards.addEventListener('submit', (evt) => {
@@ -53,37 +90,39 @@ formAddCards.addEventListener('submit', (evt) => {
     addNewCard(newCard.name, newCard.link)
     .then((card) => {
         console.log(card);
-        const item = addCards (card, showCard);
+        const item = addCards (card, showCard, userId);
         place.prepend(item);
+        closePopup(addPopup);
+        titleOfCard.value = "";
+        ancorOfCard.value = "";
     })
     .catch((err) => {
         console.log(err);
     })
     .finally(() => {
         loading(false, formAddCards.querySelector('.popup__button'));
-        closePopup(addPopup);
-        titleOfCard.value = "";
-        ancorOfCard.value = "";
+
     })
 }); 
 
 //обработчики кнопок на главной странице
 //профиль
 editButton.addEventListener('click', () =>{
+    nameInput.value = username.textContent;
+    checkInputValidity(formEditElement, nameInput, validationConfig)
+    jobInput.value = profession.textContent;
+    checkInputValidity(formEditElement, jobInput, validationConfig)
     openWindow(editPopup);
-    setEventListeners(formEditElement)
 });
 
 //добавление карточки
 addButton.addEventListener('click', () =>{
     openWindow(addPopup);
-    setEventListeners(formAddCards);
 });
 
 //обновление фото профиля
 profilePhoto.addEventListener('click', () =>{
     openWindow(photoPopup);
-    setEventListeners(formProfilePhoto);
 });
 
 //просмотр карточки
@@ -107,20 +146,21 @@ function handleEditFormSubmit(evt) {
    
     //отправляем данные на сервер
     editUserData(valueName, valueJob)
+    .then(() => {
+         //Закрываем попап
+        closePopup(editPopup)
+
+        // Вставьте новые значения с помощью textContent
+        username.textContent = valueName;
+        profession.textContent = valueJob;
+    })
     .catch((err) => {
         console.log(err);
     })
-    .then(() => {
+    .finally(() => {
         //меняем кнопку обратно
         loading(false, formEditElement.querySelector('.popup__button'));
-         //Закрываем попап
-        closePopup(editPopup)
     })
-   
-
-     // Вставьте новые значения с помощью textContent
-    username.textContent = valueName;
-    profession.textContent = valueJob;
 }
 
 // Прикрепляем обработчик к форме:
@@ -134,13 +174,14 @@ function editPhotoFormSubmit(evt) {
     //отправляем фото на сервер
     editAvatar(ancorOfPhoto.value)
     .then ((data) => {
-     //подставляем значения input в стили div с фото профиля
-    profilePhoto.setAttribute('style',`background-image: url(${data.avatar}`)})
+        //подставляем значения input в стили div с фото профиля
+        profilePhoto.setAttribute('style',`background-image: url(${data.avatar}`)
+        //Закрываем попап
+        closePopup(photoPopup)
+    })
     .catch((err) => console.log(err))
     .finally(() => {
         loading(false, formProfilePhoto.querySelector('.popup__button'))
-        //Закрываем попап
-        closePopup(photoPopup);
     })
 }
 // Прикрепляем обработчик к форме:
@@ -166,4 +207,9 @@ const validationConfig = {
     errorClass: 'popup__input-error_active'
 };
 
-export {cardTemplate, place, showCard, nameInput, jobInput, profilePhoto, username, profession, validationConfig}
+//валидация
+setEventListeners(formEditElement, validationConfig);
+setEventListeners(formAddCards, validationConfig);
+setEventListeners(formProfilePhoto, validationConfig);
+
+export {showCard}
