@@ -7,20 +7,23 @@ const config = {
     }
 }
   
+//функция вывода ответа от серыера и его проверки
+function checkAnswer (data) {
+    if (data.ok) {
+        return data.json();
+    } else {
+        // если ошибка, отклоняем промис
+        return(`Ошибка: ${data.status}`); 
+    }
+}
+
 //получаем карточки
 function getAllCards() {
     return fetch(`${config.baseUrl}/cards`, {
       method: 'GET',
       headers: config.headers
     })
-    .then(res => {
-    if (res.ok) {
-        return res.json();
-    }
-
-    // если ошибка, отклоняем промис
-    return(`Ошибка: ${res.status}`);
-    })
+    .then(res => checkAnswer(res))
 }
 
 
@@ -32,15 +35,8 @@ function getUserData() {
       method: 'GET',
       headers: config.headers
     })
-    .then(res => {
-    if (res.ok) {
-        return res.json();
-    }})
-    
-    
-    // если ошибка, отклоняем промис
-    return(`Ошибка: ${res.status}`)
-};
+    .then(res => checkAnswer(res))
+}
 
 
 
@@ -59,15 +55,7 @@ function editUserData(newName, newProfession)  {
         about: newProfession
         })
     })
-
-    .then(res => {
-    if (res.ok) {
-        return res.json();
-    }
-
-    // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-    });
+    .then(res => checkAnswer(res))
 }
 
 //добавляем карточку
@@ -76,19 +64,12 @@ function addNewCard (newname, newlink) {
         method: 'POST',
         headers: config.headers,
         body: JSON.stringify({
-        name: newname,
-        link: newlink
-        })
-    }).then(res => {
-        if (res.ok) {
-            return (res.json());
-        }
-    
-        // если ошибка, отклоняем промис
-        return Promise.reject(`Ошибка: ${res.status}`);
-        });
-
-}
+            name: newname,
+            link: newlink
+            })
+        }) 
+        .then(res => checkAnswer(res))
+    }
 
 
 
@@ -98,13 +79,7 @@ function deleteCard (cardId) {
         method: 'DELETE',
         headers: config.headers
     })
-    .then(res => {
-    if (res.ok) {
-        return res.json();
-    }
- // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-    });
+    .then(res => checkAnswer(res))
 }
 
 //добавляем лайк карточке
@@ -113,13 +88,7 @@ function addLike (cardId) {
         method: 'PUT',
         headers: config.headers
     })
-    .then(res => {
-    if (res.ok) {
-        return res.json();
-    }
- // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-    });
+    .then(res => checkAnswer(res))
 }
 
 //удаляем лайк карточке
@@ -128,13 +97,7 @@ function deleteLike (cardId) {
         method: 'DELETE',
         headers: config.headers 
     })
-    .then(res => {
-    if (res.ok) {
-        return res.json();
-    }
- // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-    });
+    .then(res => checkAnswer(res))
 }
 
 //изменение аватара
@@ -146,13 +109,7 @@ function editAvatar (newAvatar) {
         avatar: newAvatar
         })
     })
-    .then(res => {
-    if (res.ok) {
-        return res.json();
-    }
- // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-    });
+    .then(res => checkAnswer(res))
 }
 
 

@@ -3,7 +3,7 @@ import {initialCards} from './scripts/cards.js'//добавляем файл с 
 import {openWindow, closePopup} from './scripts/modal.js'//функции открытия окон
 import {addCards} from './scripts/card.js'//функции карточек
 import {setEventListeners, checkInputValidity} from './scripts/validation.js'//валидация
-import {editUserData, addNewCard, editAvatar, getCardsAndMyId} from './scripts/api.js'//api
+import {editUserData, addNewCard, editAvatar, getCardsAndMyId, deleteCard, addLike, deleteLike} from './scripts/api.js'//api
 
 //попапы
 const editButton = document.querySelector('.profile__edit-button');
@@ -13,6 +13,7 @@ const addPopup = document.querySelector('.popup_type_new-card');
 const imagePopup = document.querySelector('.popup_type_image');
 const photoPopup = document.querySelector('.popup_type_edit-photo');
 const profilePhoto = document.querySelector('.profile__image');
+
 
 //Элементы форм
 const titleOfCard = document.querySelector('.popup__input_type_card-name');
@@ -48,19 +49,16 @@ const place = document.querySelector('.places__list');
 
 //переменная для вывода моего Id
 let userId = null;
-let userNameFromServer = null;
-let userAbout = null;
 
 //получаем карточки и id вместе
 getCardsAndMyId
 .then(([getUserData,getAllCards])=>{
 
    userId = getUserData._id;
-   userNameFromServer = getUserData.name;
-   userAbout = getUserData.about;
+
 
    getAllCards.forEach(function(card){
-       const item = addCards (card, showCard, getUserData._id);
+       const item = addCards (card, showCard, getUserData._id, removeCard, giveLike);
        place.append(item); 
    })
 
@@ -90,11 +88,11 @@ formAddCards.addEventListener('submit', (evt) => {
     addNewCard(newCard.name, newCard.link)
     .then((card) => {
         console.log(card);
-        const item = addCards (card, showCard, userId);
+        const item = addCards (card, showCard, userId, removeCard, giveLike);
         place.prepend(item);
         closePopup(addPopup);
-        titleOfCard.value = "";
-        ancorOfCard.value = "";
+        formAddCards.reset();
+        setEventListeners(formAddCards, validationConfig);
     })
     .catch((err) => {
         console.log(err);
@@ -125,7 +123,7 @@ profilePhoto.addEventListener('click', () =>{
     openWindow(photoPopup);
 });
 
-//просмотр карточки
+//Функция просмотр карточки
 function showCard (card){
     imageInCard.src = card.link
     imageInCard.alt = card.link
@@ -133,6 +131,38 @@ function showCard (card){
     openWindow(imagePopup);
 }
 
+//Функция удаления карточки
+function removeCard(evt , cardId) {
+    deleteCard(cardId)
+    .then(() => evt.target.closest('.places__item').remove())
+    .catch((err) => {
+        console.log(err);
+    })
+};
+
+//функция лайка карточки и разлайка
+function giveLike(evt, card, likeCounter) {
+    if (evt.target.classList.contains('card__like-button_is-active')){
+        deleteLike(card._id)
+        .then((result) => {
+            evt.target.classList.remove('card__like-button_is-active')
+            likeCounter.textContent =result.likes.length
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }else {
+        addLike(card._id)
+        .then((result) => {
+            likeCounter.textContent = result.likes.length
+            evt.target.classList.add('card__like-button_is-active');
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+
+    }
+}
 
 
 // Обработчик «отправки» формы для профиля
@@ -178,6 +208,8 @@ function editPhotoFormSubmit(evt) {
         profilePhoto.setAttribute('style',`background-image: url(${data.avatar}`)
         //Закрываем попап
         closePopup(photoPopup)
+        formProfilePhoto.reset();
+        setEventListeners(formProfilePhoto, validationConfig);
     })
     .catch((err) => console.log(err))
     .finally(() => {
