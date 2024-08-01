@@ -2,7 +2,7 @@ import  './pages/index.css'; // добавьте импорт главного �
 import {initialCards} from './scripts/cards.js'//добавляем файл с карточками, так как этот файл - точка входа
 import {openWindow, closePopup} from './scripts/modal.js'//функции открытия окон
 import {addCards} from './scripts/card.js'//функции карточек
-import {setEventListeners, checkInputValidity} from './scripts/validation.js'//валидация
+import {setEventListeners, checkInputValidity, toggleButtonState} from './scripts/validation.js'//валидация
 import {editUserData, addNewCard, editAvatar, getCardsAndMyId, deleteCard, addLike, deleteLike} from './scripts/api.js'//api
 
 //попапы
@@ -14,13 +14,18 @@ const imagePopup = document.querySelector('.popup_type_image');
 const photoPopup = document.querySelector('.popup_type_edit-photo');
 const profilePhoto = document.querySelector('.profile__image');
 
+//Формы
+const formAddCards = document.forms['new-place'];
+const formProfilePhoto = document.forms['new-photo'];
+const formEditElement = document.forms['edit-profile']
 
 //Элементы форм
 const titleOfCard = document.querySelector('.popup__input_type_card-name');
 const ancorOfCard = document.querySelector('.popup__input_type_url');
-
-const formProfilePhoto = document.forms['new-photo'];
 const ancorOfPhoto = formProfilePhoto.querySelector('.popup__input_type_photo');
+const submitButtonPhoto = formProfilePhoto.querySelector('.popup__button');
+const submitButtonAddCard = formAddCards.querySelector('.popup__button');
+const submitButtonEdit = formEditElement.querySelector('.popup__button');
 
 //Элементы карточки
 const imageInCard = document.querySelector('.popup__image');
@@ -30,19 +35,9 @@ const titleInCard = document.querySelector('.popup__caption');
 const username = document.querySelector('.profile__title');
 const profession = document.querySelector('.profile__description');
 
-// Находим форму профиля в DOM
-const formEditElement = document.forms['edit-profile']
-
 // Находим поля формы в DOM
 const nameInput = formEditElement.elements.name
 const jobInput = formEditElement.elements.description
-
-//Подставляем имя и профессию со страницы в popup
-// @todo: Темплейт карточки
-
-
-//создаём узлы формы и инпутов
-const formAddCards = document.forms['new-place'];
 
 // создаём узел места расположения карточек
 const place = document.querySelector('.places__list');
@@ -92,7 +87,8 @@ formAddCards.addEventListener('submit', (evt) => {
         place.prepend(item);
         closePopup(addPopup);
         formAddCards.reset();
-        setEventListeners(formAddCards, validationConfig);
+        const inputListCard = Array.from(formAddCards);
+        toggleButtonState (inputListCard, submitButtonAddCard, validationConfig)
     })
     .catch((err) => {
         console.log(err);
@@ -110,6 +106,8 @@ editButton.addEventListener('click', () =>{
     checkInputValidity(formEditElement, nameInput, validationConfig)
     jobInput.value = profession.textContent;
     checkInputValidity(formEditElement, jobInput, validationConfig)
+    submitButtonEdit.classList.remove(validationConfig.inactiveButtonClass);
+    submitButtonEdit.disabled = false
     openWindow(editPopup);
 });
 
@@ -169,11 +167,11 @@ function giveLike(evt, card, likeCounter) {
 function handleEditFormSubmit(evt) {
     evt.preventDefault();
     //меняем кнопку на загрузку
-    loading(true, formEditElement.querySelector('.popup__button'));
+    loading(true, submitButtonEdit);
     // Получите значение полей jobInput и nameInput из свойства value
     const valueName = nameInput.value;
     const valueJob = jobInput.value;
-   
+
     //отправляем данные на сервер
     editUserData(valueName, valueJob)
     .then(() => {
@@ -189,7 +187,7 @@ function handleEditFormSubmit(evt) {
     })
     .finally(() => {
         //меняем кнопку обратно
-        loading(false, formEditElement.querySelector('.popup__button'));
+        loading(false, submitButtonEdit);
     })
 }
 
@@ -200,7 +198,7 @@ formEditElement.addEventListener('submit', handleEditFormSubmit);
 // Обработчик «отправки» формы для профиля
 function editPhotoFormSubmit(evt) {
     evt.preventDefault();
-    loading(true, formProfilePhoto.querySelector('.popup__button'));
+    loading(true, submitButtonPhoto);
     //отправляем фото на сервер
     editAvatar(ancorOfPhoto.value)
     .then ((data) => {
@@ -209,11 +207,12 @@ function editPhotoFormSubmit(evt) {
         //Закрываем попап
         closePopup(photoPopup)
         formProfilePhoto.reset();
-        setEventListeners(formProfilePhoto, validationConfig);
+        const inputListPhoto = Array.from(formProfilePhoto);
+        toggleButtonState ( inputListPhoto, submitButtonPhoto, validationConfig)
     })
     .catch((err) => console.log(err))
     .finally(() => {
-        loading(false, formProfilePhoto.querySelector('.popup__button'))
+        loading(false, submitButtonPhoto)
     })
 }
 // Прикрепляем обработчик к форме:

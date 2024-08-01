@@ -61,4 +61,4 @@ function toggleButtonState (inputList, buttonElement, config) {
     }
 }
 
-export {setEventListeners, checkInputValidity};
+export {setEventListeners, checkInputValidity, toggleButtonState};
