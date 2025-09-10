@@ -19,6 +19,3 @@ HTML,CSS, адаативная верстка
 1. Установть все необходимые пакеты `npm i`
 2. Запустить проект `npm run dev`
 
-
-https://www.figma.com/design/iCqhYZoj4CTFvBjQaBSAXq/JavaScript.-Sprint-5--Copy-?node-id=0-1&p=f&t=ZVCP15pfZlVNoL6O-0
-
